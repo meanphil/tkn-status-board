@@ -7,16 +7,14 @@ export PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME}: ${PWD/$HOME/~}\007"
 
 export SSH_ENV="$HOME/.ssh/environment"
 
-
-# WB: startx if it isn't already running
 XPID=`/usr/bin/pgrep xinit`
 
-if [ -n "$XPID" ]; then
-  echo "X is already running"
+if [ -n "$XPID" ] || [[ $(tty) != /dev/tty1 ]]; then
+  echo "X is already running, or not main tty"
 else
   god -c ~/status-board/god.conf
   sleep 2
-  echo "POWER ON" | nc -N localhost 4684
+  ~/status-board/aquos/power.sh on
   startx -- -nocursor
   logout
 fi
